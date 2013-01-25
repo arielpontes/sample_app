@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.11'
 gem 'bootstrap-sass'
 gem 'bcrypt-ruby'
+gem 'faker'
+gem 'will_paginate'
+gem 'bootstrap-will_paginate'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -36,8 +39,8 @@ group :test do
   gem 'capybara', '1.1.2'
   gem 'rb-fsevent', '0.9.1', :require => false
   gem 'growl', '1.0.3'
-  gem 'guard-spork', '1.2.0'
-  gem 'spork', '0.9.2'
+  gem 'guard-spork'
+  gem 'spork'
   gem 'factory_girl_rails'
 end
 
