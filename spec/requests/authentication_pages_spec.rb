@@ -3,7 +3,18 @@ require 'spec_helper'
 describe "Authentication" do
 
   subject { page }
-
+  
+  describe "when not signed in" do
+    let(:user) { FactoryGirl.create(:user) }
+      
+    it { should_not have_link('Users',    href: users_path) }
+    it { should_not have_link('Profile',  href: user_path(user)) }
+    it { should_not have_link('Settings', href: edit_user_path(user)) }
+    it { should_not have_link('Sign out', href: signout_path) }
+    
+    #it { should have_link('Sign in', href: signin_path) }
+  end
+  
   describe "signin page" do
     before { visit signin_path }
 
@@ -66,6 +77,20 @@ describe "Authentication" do
             page.should have_selector('title', text: 'Edit user')
           end
         end
+        
+        describe "when signing in again" do
+          before do
+            delete signout_path
+            visit signin_path
+            fill_in "Email",    with: user.email
+            fill_in "Password", with: user.password
+            click_button "Sign in"
+          end
+          
+          it "should render the default profile page" do
+            page.should have_selector('title', text: user.name)
+          end
+        end
       end
 
       describe "in the Users controller" do
@@ -83,6 +108,14 @@ describe "Authentication" do
         describe "visiting the user index" do
           before { visit users_path }
           it { should have_selector('title', text: 'Sign in') }
+        end
+        
+        describe "submitting to the create action" do
+          before do
+            sign_in user
+            post users_path
+          end
+          specify { response.should redirect_to(root_path) }
         end
       end
     end
@@ -111,6 +144,21 @@ describe "Authentication" do
 
       describe "submitting a DELETE request to the Users#destroy action" do
         before { delete user_path(user) }
+        specify { response.should redirect_to(root_path) }        
+      end
+    end
+    
+    describe "as an admin user" do
+      let(:admin) { FactoryGirl.create(:admin) }
+
+      before { sign_in admin }
+
+      it "should not be able to delete itself" do
+        expect { delete user_path(admin) }.not_to change(User, :count)    
+      end
+      
+      describe "submitting a DELETE request to the Users#destroy action" do
+        before { delete user_path(admin) }
         specify { response.should redirect_to(root_path) }        
       end
     end

@@ -60,8 +60,19 @@ describe "User pages" do
   
   describe "signup" do
 
+    describe "when signed in" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        sign_in user
+        visit signup_path
+      end
+      it { should have_selector('h1',    text: 'Sample App') }
+      it { should have_selector('title', text: full_title('')) }
+      it { should_not have_selector 'title', text: '| Home' }
+    end
+        
     before { visit signup_path }
-
+    
     let(:submit) { "Create my account" }
 
     describe "with invalid information" do
