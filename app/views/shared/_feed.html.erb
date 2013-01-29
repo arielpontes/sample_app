@@ -1,3 +1,4 @@
+<%# extends home_in %>
 <% if @feed_items.any? %>
   <ol class="microposts">
     <%= render partial: 'shared/feed_item', collection: @feed_items %>
